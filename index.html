@@ -9,16 +9,19 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700&family=Roboto+Mono:wght@500&display=swap">
 <style>
-/* Layout: 한 장짜리 모바일 카드 흐름(인트로 → 구단 → 9문항 → 결과), 위에 경기장 라인 모티프 */
+/* Layout: 한 장짜리 모바일 카드 흐름(인트로 → 구단 → 9문항 → 결과). 색은 K리그 로고(네이비 #001C48·레드 #EE2529·흰색) */
 :root {
-  --turf: #0f5c35;        /* 잔디 */
-  --turf-deep: #0a3f25;
-  --chalk: #f6f7f2;       /* 라인 분필 */
-  --ink: #15211a;
-  --muted: #5d6b62;
-  --board: #f2b705;       /* 전광판 노랑 */
+  --navy: #001c48;        /* K리그 로고 네이비 */
+  --navy-2: #0a2d6b;
+  --red: #ee2529;         /* K리그 로고 레드 */
+  --red-text: #d41e23;    /* 흰 바탕 작은 글씨용(대비 4.5 이상) */
+  --brand: var(--navy);   /* 기본 버튼·진행 막대 */
+  --brand-ink: #ffffff;
+  --chalk: #eef1f6;
+  --ink: #0b1a33;
+  --muted: #56637a;
   --card: #ffffff;
-  --line: #d7ddd5;
+  --line: #d6dce6;
   --font-display: "Black Han Sans", "Noto Sans KR", system-ui, sans-serif;
   --font-body: "Noto Sans KR", system-ui, -apple-system, "Apple SD Gothic Neo", sans-serif;
   --font-num: "Roboto Mono", ui-monospace, monospace;
@@ -26,13 +29,13 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --turf: #1f8a52; --turf-deep: #0d2a1b; --chalk: #0f1712; --ink: #e9efe9; --muted: #9db0a3;
-    --board: #f7c934; --card: #17221b; --line: #2a3a30; color-scheme: dark;
+    --brand: #ffffff; --brand-ink: #001c48; --red-text: #ff6b6e;
+    --chalk: #040d1f; --ink: #e8edf6; --muted: #9aa7bf; --card: #0b1a36; --line: #1f3156; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --turf: #1f8a52; --turf-deep: #0d2a1b; --chalk: #0f1712; --ink: #e9efe9; --muted: #9db0a3;
-  --board: #f7c934; --card: #17221b; --line: #2a3a30; color-scheme: dark;
+  --brand: #ffffff; --brand-ink: #001c48; --red-text: #ff6b6e;
+  --chalk: #040d1f; --ink: #e8edf6; --muted: #9aa7bf; --card: #0b1a36; --line: #1f3156; color-scheme: dark;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -42,49 +45,57 @@ body {
   padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 .pitch {
-  background: var(--turf);
-  background-image: repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 40px, transparent 40px 80px);
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy) 55%, var(--navy-2) 100%);
   color: #fff;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 28px 56px; position: relative; overflow: hidden;
+  padding-block: 22px 60px; position: relative; overflow: hidden;
 }
-.pitch::after { /* 센터서클 */
-  content: ""; position: absolute; width: 220px; height: 220px; border: 2px solid rgba(255,255,255,.18);
-  border-radius: 50%; right: -70px; top: -60px;
+.pitch::before { /* 로고의 빨간 날개를 닮은 사선 띠. 화면 폭과 상관없이 헤더 아래 50px 안에서만 기운다 */
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 50px; background: var(--red); opacity: .9;
+  clip-path: polygon(0 40px, 100% 6px, 100% 12px, 0 46px);
 }
-.wrap { max-width: 560px; margin: 0 auto; position: relative; }
-.eyebrow { font-family: var(--font-num); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; opacity: .85; }
-h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(30px, 8vw, 42px); line-height: 1.15; margin: 8px 0 10px; text-wrap: balance; }
-.lead { margin: 0; opacity: .92; max-width: 34em; }
+.pitch::after { /* K 심볼 워터마크 */
+  content: ""; position: absolute; width: 230px; height: 260px; right: -46px; top: -18px;
+  background: url("assets/k_symbol_rw.png") no-repeat right top / contain; opacity: .16; pointer-events: none;
+}
+.wrap { max-width: 560px; margin: 0 auto; position: relative; z-index: 1; }
+.brandrow { display: flex; align-items: center; gap: 10px; }
+.kl-logo { height: 26px; width: auto; display: block; }
+.eyebrow { font-family: var(--font-num); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; opacity: .85;
+  padding-left: 10px; border-left: 1px solid rgba(255,255,255,.35); }
+h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(30px, 8vw, 42px); line-height: 1.15; margin: 16px 0 10px; text-wrap: balance; }
+.lead { margin: 0; opacity: .9; max-width: 34em; }
 main {
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
   padding-block: 0 40px;
 }
 .panel {
-  max-width: 560px; margin: -36px auto 0; background: var(--card); border: 1px solid var(--line); border-radius: 14px;
-  padding: 22px 18px; position: relative; box-shadow: 0 10px 30px rgba(10,40,25,.08);
+  max-width: 560px; margin: -36px auto 0; background: var(--card); border: 1px solid var(--line); border-top: 4px solid var(--red);
+  border-radius: 14px; padding: 22px 18px; position: relative; box-shadow: 0 12px 32px rgba(0,28,72,.12);
 }
 .panel h2 { font-family: var(--font-display); font-weight: 400; font-size: 24px; line-height: 1.25; margin: 0 0 14px; text-wrap: balance; }
 .btn {
   appearance: none; border: 0; border-radius: 10px; font: inherit; font-weight: 700; cursor: pointer;
-  padding: 14px 18px; background: var(--turf); color: #fff; width: 100%; font-size: 17px;
+  padding: 14px 18px; background: var(--brand); color: var(--brand-ink); width: 100%; font-size: 17px;
 }
-.btn.board { background: var(--board); color: #1d1600; }
+.btn.board { background: var(--red); color: #fff; }
 .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); font-weight: 500; }
-.btn:focus-visible, .opt:focus-visible, .club:focus-visible { outline: 3px solid var(--board); outline-offset: 2px; }
+.btn:focus-visible, .opt:focus-visible, .club:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
 .stack { display: grid; gap: 10px; }
 .meta { color: var(--muted); font-size: 13px; }
-.league-h { font-family: var(--font-num); font-size: 12px; letter-spacing: .1em; color: var(--muted); margin: 14px 0 8px; }
+.league-h { font-family: var(--font-num); font-size: 12px; letter-spacing: .1em; color: var(--muted); margin: 14px 0 8px;
+  display: flex; align-items: center; gap: 8px; }
+.league-h::before { content: ""; width: 3px; height: 12px; background: var(--red); border-radius: 2px; }
 .clubs { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
 .club {
   appearance: none; font: inherit; cursor: pointer; border: 1px solid var(--line); background: var(--chalk); color: var(--ink);
   border-radius: 10px; padding: 10px 6px; font-size: 14px; font-weight: 500;
 }
-.club:hover, .opt:hover { border-color: var(--turf); }
+.club:hover, .opt:hover { border-color: var(--red); }
 .none { margin-top: 12px; }
 .progress { display: flex; gap: 4px; margin-bottom: 16px; }
 .progress span { flex: 1; height: 5px; border-radius: 3px; background: var(--line); }
-.progress span.on { background: var(--turf); }
+.progress span.on { background: var(--red); }
 .qnum { color: var(--muted); font-size: 13px; font-weight: 500; }
 .opt {
   appearance: none; font: inherit; text-align: left; cursor: pointer; width: 100%;
@@ -92,12 +103,12 @@ main {
 }
 .matchbar {
   max-width: 560px; margin: 12px auto 0; display: flex; align-items: center; justify-content: space-between; gap: 10px;
-  border: 1px dashed var(--line); border-radius: 12px; padding: 10px 12px; font-size: 14px;
+  border: 1px solid var(--line); border-left: 4px solid var(--red); background: var(--card); border-radius: 12px; padding: 10px 12px; font-size: 14px;
 }
 .matchbar b { font-family: var(--font-num); font-weight: 500; }
-.matchbar a { color: var(--turf); font-weight: 700; white-space: nowrap; text-decoration: none; }
+.matchbar a { color: var(--red-text); font-weight: 700; white-space: nowrap; text-decoration: none; }
 .result-type { font-family: var(--font-display); font-weight: 400; font-size: clamp(34px, 10vw, 46px); line-height: 1.1; margin: 4px 0 6px; }
-.chip { display: inline-block; font-size: 12px; padding: 2px 10px; border-radius: 999px; background: var(--board); color: #1d1600; font-weight: 700; }
+.chip { display: inline-block; font-size: 12px; padding: 2px 10px; border-radius: 999px; background: var(--red); color: #fff; font-weight: 700; }
 .player { display: grid; grid-template-columns: 96px 1fr; gap: 14px; align-items: center; margin: 18px 0; padding: 14px; border-radius: 12px; background: var(--chalk); border: 1px solid var(--line); }
 .player img { width: 96px; height: 120px; object-fit: cover; object-position: top; border-radius: 8px; background: var(--line); max-width: 100%; }
 .player .nm { font-family: var(--font-display); font-size: 26px; line-height: 1.2; }
@@ -110,7 +121,7 @@ main {
 .basis .bl { min-width: 0; }
 .basis .bv { font-family: var(--font-num); font-variant-numeric: tabular-nums; font-weight: 500; }
 .basis .bt { font-size: 12px; color: var(--muted); min-width: 76px; text-align: right; }
-.basis .bt.hot { color: var(--turf); font-weight: 700; }
+.basis .bt.hot { color: var(--red-text); font-weight: 700; }
 footer { max-width: 560px; margin: 24px auto 0; font-size: 12px; color: var(--muted); }
 @media (prefers-reduced-motion: no-preference) { .panel { animation: rise .25s ease-out; } @keyframes rise { from { transform: translateY(6px); } to { transform: none; } } }
 </style>
@@ -118,7 +129,7 @@ footer { max-width: 560px; margin: 24px auto 0; font-size: 12px; color: var(--mu
 <body>
 <header class="pitch">
   <div class="wrap">
-    <div class="eyebrow">K LEAGUE · PLAY STYLE QUIZ</div>
+    <div class="brandrow"><img class="kl-logo" src="assets/kleague_logo_rw.png" alt="K LEAGUE"><span class="eyebrow">Play Style Quiz</span></div>
     <h1>내 플레이스타일 K리거 찾기</h1>
     <p class="lead">9문항이면 끝나요. 내 플레이스타일을 찾고, 우리 팀에서 나와 같은 유형의 선수를 만나 보세요.</p>
   </div>
