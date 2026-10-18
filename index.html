@@ -321,6 +321,7 @@ footer { max-width: 560px; margin: 24px auto 0; font-size: 12px; color: var(--mu
     const hasRep = list.some(x => x.label === "대표");   // 대표가 있는데 답과 더 닮은 비슷한 선수가 뽑힌 경우(프라이데이 F31)
     const scope = cands && cands.length ? `${club.short}의 ${type}` : `K리그의 ${type}`;
     const pclub = clubByShort(p.club) || club;
+    if (!club) applyTheme(pclub);   // 응원팀 없음: 결과 화면은 나온 선수의 구단 색(다시 해 보기 → intro에서 K리그 기본색)
     const tclub = club || pclub;   // 예매 링크: 응원팀, 없으면 그 선수 구단
     const playsThere = tclub.short === p.club;
     log("result", { type, player: p.name, player_club: p.club, label: p.label, answers: answers.join("") });
