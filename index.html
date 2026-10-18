@@ -294,12 +294,32 @@ footer { max-width: 560px; margin: 24px auto 0; font-size: 12px; color: var(--mu
     return Object.keys(votes).filter(t => D.family[t] === fam).sort((a, b) => votes[b] - votes[a] || last[b] - last[a])[0];
   }
 
+  // 후보 고르기: 답안 표 수(유형별, 결과 유형이 아닌 표까지)를 평균 0·길이 1로 맞춰
+  // 선수 프로필(build_site.py vec, 10유형 적합도를 같은 방식으로 맞춘 것)과 내적 + 첫 문항 자리와 포지션이 같으면 가산.
+  // 같은 답이면 늘 같은 선수. 동점이면 앞(적합도 높은) 후보. 골키퍼는 후보 1명이라 그대로.
+  const POS_W = 0.15;
+  function pick(list) {
+    const u = D.fitOrder.map(() => 0);
+    answers.forEach((k, i) => { const j = D.fitOrder.indexOf(D.questions[i].opts[k].type); if (j >= 0) u[j]++; });
+    const m = u.reduce((a, b) => a + b, 0) / u.length, c = u.map(x => x - m), n = Math.hypot(...c) || 1;
+    const pos = D.questions[0].opts[answers[0]].pos;
+    let best = list[0], bs = -Infinity;
+    for (const p of list) {
+      if (!p.v) continue;
+      const s = p.v.reduce((a, x, j) => a + x * c[j] / n, 0) + (pos && p.pos === pos ? POS_W : 0);
+      if (s > bs + 1e-9) { bs = s; best = p; }
+    }
+    return best;
+  }
+
   // ---------- 4. 결과 ----------
   function result(type) {
-    let p = club && club.players[type];
-    let scope = club ? `${club.short}의 ${type}` : `K리그1의 ${type}`;
-    const sub = !!club && !p;      // 응원팀에 이 유형 대표가 없어 K리그1 대표로 대체
-    if (!p) { p = D.league[type]; scope = `K리그1의 ${type}`; }
+    const cands = club && club.players[type];
+    const sub = !!club && !(cands && cands.length);   // 응원팀에 이 유형 후보가 없어 K리그 후보로 대체
+    const list = cands && cands.length ? cands : D.league[type];
+    const p = pick(list);
+    const hasRep = list.some(x => x.label === "대표");   // 대표가 있는데 답과 더 닮은 비슷한 선수가 뽑힌 경우(프라이데이 F31)
+    const scope = cands && cands.length ? `${club.short}의 ${type}` : `K리그의 ${type}`;
     const pclub = clubByShort(p.club) || club;
     const tclub = club || pclub;   // 예매 링크: 응원팀, 없으면 그 선수 구단
     const playsThere = tclub.short === p.club;
@@ -317,7 +337,7 @@ footer { max-width: 560px; margin: 24px auto 0; font-size: 12px; color: var(--mu
     // 골키퍼는 포지션으로 정해지는 유형이라 '이유' 대신 '이번 시즌 골문'. 순위는 상위 50% 안일 때만 붙인다
     const gk = p.pos === "GK";
     const basis = !p.stats.length ? el("div", {}) : el("div", { class: "basis" },
-      el("div", { class: "basis-h" }, gk ? `${p.name}의 이번 시즌 골문` : p.stats.some(s => s.top <= 50) ? `${p.name}${iga(p.name)} ${type}인 이유` : `${p.name}의 ${type} 관련 기록`),
+      el("div", { class: "basis-h" }, gk ? `${p.name}의 이번 시즌 골문` : p.label === "대표" && p.stats.some(s => s.top <= 50) ? `${p.name}${iga(p.name)} ${type}인 이유` : `${p.name}의 ${type} 관련 기록`),
       el("ul", {}, p.stats.map(s => el("li", {},
         el("span", { class: "bl" }, s.label),
         el("span", { class: "bv" }, s.value),
@@ -335,7 +355,8 @@ footer { max-width: 560px; margin: 24px auto 0; font-size: 12px; color: var(--mu
     cta.querySelectorAll("a").forEach(x => { x.style.textAlign = "center"; x.style.textDecoration = "none"; x.style.display = "block"; });
     a.textContent = playsThere && nextGame(tclub) ? `${p.name} 보러 가기 · ${ticketWord(tclub)}` : `${tclub.short} ${ticketWord(tclub)}`;
 
-    const note = sub ? `${club.short}에는 기록상 이 유형에 가까운 선수가 없어서, K리그1 대표 선수를 보여 드려요.`
+    const note = sub ? `${club.short}에는 기록상 이 유형에 가까운 선수가 없어서, K리그 선수 중에서 골라 드려요.`
+      : p.label === "가장 비슷한 선수" && hasRep ? `내 답과 기록 모양이 가장 닮은 선수예요. 기록상 ${type}${iga(type) === "이" ? "과" : "와"} 가까운 선수라 '가장 비슷한 선수'로 표시했어요.`
       : p.label === "가장 비슷한 선수" ? "이 팀에는 기록상 딱 맞는 선수가 없어서, 가장 가까운 선수를 보여 드려요."
       : "선수 유형은 2026 시즌 경기 기록으로 나눈 결과예요.";
     show(el("div", { class: "qnum" }, "나의 플레이스타일"),
