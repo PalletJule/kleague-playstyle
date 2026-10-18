@@ -14,9 +14,14 @@
   --navy: #001c48;        /* K리그 로고 네이비 */
   --navy-2: #0a2d6b;
   --red: #ee2529;         /* K리그 로고 레드 */
-  --red-text: #d41e23;    /* 흰 바탕 작은 글씨용(대비 4.5 이상) */
-  --brand: var(--navy);   /* 기본 버튼·진행 막대 */
-  --brand-ink: #ffffff;
+  /* 테마: 응원 구단을 고르면 JS(applyTheme)가 아래 7개를 구단 엠블럼 색으로 덮어쓴다 */
+  --head: var(--navy); --head-2: var(--navy-2); --head-ink: #ffffff;
+  --accent-l: var(--red); --accent-ink-l: #ffffff; --accent-dk: var(--red); --accent-ink-dk: #ffffff;  /* 라이트·다크 강조색 */
+  --accent: var(--accent-l); --accent-ink: var(--accent-ink-l);
+  --accent-text-l: #d41e23; --accent-text-d: #ff6b6e;   /* 카드 위 작은 글씨용(대비 4.5 이상) */
+  --red-text: var(--accent-text-l);
+  --brand: var(--head);   /* 기본 버튼 */
+  --brand-ink: var(--head-ink);
   --chalk: #eef1f6;
   --ink: #0b1a33;
   --muted: #56637a;
@@ -29,12 +34,12 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --brand: #ffffff; --brand-ink: #001c48; --red-text: #ff6b6e;
+    --brand: #ffffff; --brand-ink: #0b1a33; --red-text: var(--accent-text-d); --accent: var(--accent-dk); --accent-ink: var(--accent-ink-dk);
     --chalk: #040d1f; --ink: #e8edf6; --muted: #9aa7bf; --card: #0b1a36; --line: #1f3156; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --brand: #ffffff; --brand-ink: #001c48; --red-text: #ff6b6e;
+  --brand: #ffffff; --brand-ink: #0b1a33; --red-text: var(--accent-text-d); --accent: var(--accent-dk); --accent-ink: var(--accent-ink-dk);
   --chalk: #040d1f; --ink: #e8edf6; --muted: #9aa7bf; --card: #0b1a36; --line: #1f3156; color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -45,13 +50,14 @@ body {
   padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 .pitch {
-  background: linear-gradient(135deg, var(--navy) 0%, var(--navy) 55%, var(--navy-2) 100%);
-  color: #fff;
+  background: linear-gradient(135deg, var(--head) 0%, var(--head) 55%, var(--head-2) 100%);
+  color: var(--head-ink);
+  transition: color .3s;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
   padding-block: 22px 60px; position: relative; overflow: hidden;
 }
 .pitch::before { /* 로고의 빨간 날개를 닮은 사선 띠. 화면 폭과 상관없이 헤더 아래 50px 안에서만 기운다 */
-  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 50px; background: var(--red); opacity: .9;
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 50px; background: var(--stripe, var(--accent)); opacity: .9;
   clip-path: polygon(0 40px, 100% 6px, 100% 12px, 0 46px);
 }
 .pitch::after { /* K 심볼 워터마크 */
@@ -62,7 +68,7 @@ body {
 .brandrow { display: flex; align-items: center; gap: 10px; }
 .kl-logo { height: 26px; width: auto; display: block; }
 .eyebrow { font-family: var(--font-num); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; opacity: .85;
-  padding-left: 10px; border-left: 1px solid rgba(255,255,255,.35); }
+  padding-left: 10px; border-left: 1px solid currentColor; }
 h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(30px, 8vw, 42px); line-height: 1.15; margin: 16px 0 10px; text-wrap: balance; }
 .lead { margin: 0; opacity: .9; max-width: 34em; }
 main {
@@ -70,7 +76,7 @@ main {
   padding-block: 0 40px;
 }
 .panel {
-  max-width: 560px; margin: -36px auto 0; background: var(--card); border: 1px solid var(--line); border-top: 4px solid var(--red);
+  max-width: 560px; margin: -36px auto 0; background: var(--card); border: 1px solid var(--line); border-top: 4px solid var(--accent);
   border-radius: 14px; padding: 22px 18px; position: relative; box-shadow: 0 12px 32px rgba(0,28,72,.12);
 }
 .panel h2 { font-family: var(--font-display); font-weight: 400; font-size: 24px; line-height: 1.25; margin: 0 0 14px; text-wrap: balance; }
@@ -78,24 +84,25 @@ main {
   appearance: none; border: 0; border-radius: 10px; font: inherit; font-weight: 700; cursor: pointer;
   padding: 14px 18px; background: var(--brand); color: var(--brand-ink); width: 100%; font-size: 17px;
 }
-.btn.board { background: var(--red); color: #fff; }
+.btn.board { background: var(--accent); color: var(--accent-ink); }
+.btn.plab { background: transparent; color: var(--red-text); border: 2px solid var(--accent); }
 .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); font-weight: 500; }
-.btn:focus-visible, .opt:focus-visible, .club:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+.btn:focus-visible, .opt:focus-visible, .club:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .stack { display: grid; gap: 10px; }
 .meta { color: var(--muted); font-size: 13px; }
 .league-h { font-family: var(--font-num); font-size: 12px; letter-spacing: .1em; color: var(--muted); margin: 14px 0 8px;
   display: flex; align-items: center; gap: 8px; }
-.league-h::before { content: ""; width: 3px; height: 12px; background: var(--red); border-radius: 2px; }
+.league-h::before { content: ""; width: 3px; height: 12px; background: var(--accent); border-radius: 2px; }
 .clubs { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
 .club {
   appearance: none; font: inherit; cursor: pointer; border: 1px solid var(--line); background: var(--chalk); color: var(--ink);
   border-radius: 10px; padding: 10px 6px; font-size: 14px; font-weight: 500;
 }
-.club:hover, .opt:hover { border-color: var(--red); }
+.club:hover, .opt:hover { border-color: var(--accent); }
 .none { margin-top: 12px; }
 .progress { display: flex; gap: 4px; margin-bottom: 16px; }
 .progress span { flex: 1; height: 5px; border-radius: 3px; background: var(--line); }
-.progress span.on { background: var(--red); }
+.progress span.on { background: var(--accent); }
 .qnum { color: var(--muted); font-size: 13px; font-weight: 500; }
 .opt {
   appearance: none; font: inherit; text-align: left; cursor: pointer; width: 100%;
@@ -103,12 +110,12 @@ main {
 }
 .matchbar {
   max-width: 560px; margin: 12px auto 0; display: flex; align-items: center; justify-content: space-between; gap: 10px;
-  border: 1px solid var(--line); border-left: 4px solid var(--red); background: var(--card); border-radius: 12px; padding: 10px 12px; font-size: 14px;
+  border: 1px solid var(--line); border-left: 4px solid var(--accent); background: var(--card); border-radius: 12px; padding: 10px 12px; font-size: 14px;
 }
 .matchbar b { font-family: var(--font-num); font-weight: 500; }
 .matchbar a { color: var(--red-text); font-weight: 700; white-space: nowrap; text-decoration: none; }
 .result-type { font-family: var(--font-display); font-weight: 400; font-size: clamp(34px, 10vw, 46px); line-height: 1.1; margin: 4px 0 6px; }
-.chip { display: inline-block; font-size: 12px; padding: 2px 10px; border-radius: 999px; background: var(--red); color: #fff; font-weight: 700; }
+.chip { display: inline-block; font-size: 12px; padding: 2px 10px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-weight: 700; }
 .player { display: grid; grid-template-columns: 96px 1fr; gap: 14px; align-items: center; margin: 18px 0; padding: 14px; border-radius: 12px; background: var(--chalk); border: 1px solid var(--line); }
 .player img { width: 96px; height: 120px; object-fit: cover; object-position: top; border-radius: 8px; background: var(--line); max-width: 100%; }
 .player .nm { font-family: var(--font-display); font-size: 26px; line-height: 1.2; }
@@ -129,9 +136,9 @@ footer { max-width: 560px; margin: 24px auto 0; font-size: 12px; color: var(--mu
 <body>
 <header class="pitch">
   <div class="wrap">
-    <div class="brandrow"><img class="kl-logo" src="assets/kleague_logo_rw.png" alt="K LEAGUE"><span class="eyebrow">Play Style Quiz</span></div>
+    <div class="brandrow"><img class="kl-logo" id="kl-logo" src="assets/kleague_logo_rw.png" alt="K LEAGUE"><span class="eyebrow">Play Style Quiz</span></div>
     <h1>내 플레이스타일 K리거 찾기</h1>
-    <p class="lead">9문항이면 끝나요. 내 플레이스타일을 찾고, 우리 팀에서 나와 같은 유형의 선수를 만나 보세요.</p>
+    <p class="lead">9문항이면 끝나요(골키퍼는 바로 결과). 내 플레이스타일을 찾고, 우리 팀에서 나와 같은 유형의 선수를 만나 보세요.</p>
   </div>
 </header>
 <main>
@@ -183,6 +190,49 @@ footer { max-width: 560px; margin: 24px auto 0; font-size: 12px; color: var(--mu
   const clubById = id => D.clubs.find(c => c.id === id);
   const clubByShort = s => D.clubs.find(c => c.short === s);
 
+  // ---------- 응원 구단 색 ----------
+  // [헤더, 헤더 그라데이션 끝, 강조(버튼·칩·진행 막대·띠)] — K리그 공식 엠블럼에서 뽑은 색(10/18)
+  const THEMES = {
+    K01: ["#0a4a9c", "#06306a", "#0a4a9c"], K03: ["#111111", "#2a2a2a", "#e0312b"], K04: ["#0a1a6b", "#0d2a8a", "#f07800"],
+    K05: ["#1f5a3a", "#123c26", "#f2d048"], K09: ["#111111", "#3a0606", "#d80c18"], K10: ["#13385a", "#0a2238", "#0a8a72"],
+    K18: ["#1c1414", "#0868b8", "#0868b8"], K21: ["#086858", "#063f36", "#e86a10"], K22: ["#c8102e", "#8c0a1f", "#f8c100"],
+    K26: ["#a82828", "#5a1414", "#1a1a1a"], K27: ["#482878", "#181838", "#c8a858"], K35: ["#0a2848", "#061a30", "#b81828"],
+    K02: ["#0858a8", "#063c75", "#e83838"], K06: ["#b81828", "#7e0f1b", "#b81828"], K07: ["#111111", "#2a2a2a", "#f8d808"],
+    K08: ["#1a1212", "#3a3434", "#1a1212"], K17: ["#5ab8ea", "#3a9fdc", "#0868b8"], K20: ["#c8150c", "#1e1e1e", "#1e1e1e"],
+    K29: ["#083868", "#05244a", "#d80828"], K31: ["#0a0a38", "#1c2a5a", "#486888"], K32: ["#08303e", "#05202a", "#089878"],
+    K34: ["#083898", "#05256a", "#f8d818"], K36: ["#283848", "#1a2530", "#c8b868"], K37: ["#182858", "#0e1a3c", "#e83838"],
+    K38: ["#58b8e8", "#2a8cc4", "#1e88c8"], K39: ["#082858", "#051a3a", "#e84808"], K40: ["#283898", "#1a2668", "#e898b8"],
+    K41: ["#c80818", "#8a0510", "#a87828"], K42: ["#a80838", "#700525", "#58c8e8"],
+  };
+  const rgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+  const lum = h => { const [r, g, b] = rgb(h).map(v => { v /= 255; return v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; }); return .2126 * r + .7152 * g + .0722 * b; };
+  const contrast = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
+  const mix = (a, b, t) => "#" + rgb(a).map((v, i) => Math.round(v + (rgb(b)[i] - v) * t).toString(16).padStart(2, "0")).join("");
+  const INK = "#0b1a33";
+  // 헤더 제목·버튼 글씨는 크고 굵어서 흰색 대비 3 이상이면 흰색(빨강·주황 버튼에 남색 글씨가 나오지 않게)
+  const inkOn = bg => contrast(bg, "#ffffff") >= 3 ? "#ffffff" : INK;
+  // 카드 위 작은 글씨: 강조색을 대비 4.5가 될 때까지 흰 카드에선 어둡게, 다크 카드에선 밝게
+  const readable = (c, card, toward) => { let t = 0, x = c; while (contrast(x, card) < 4.5 && t < 1) { t += .05; x = mix(c, toward, t); } return x; };
+  // 노랑·금색처럼 밝은 강조색은 어둡게 하면 탁한 올리브가 되므로, 많이 어둡혀야 하면 구단 헤더색(대비 4.5 이상일 때)으로
+  const textOnWhite = (ac, hd) => { const x = readable(ac, "#ffffff", "#000000"); return contrast(ac, "#ffffff") < 3 && contrast(hd, "#ffffff") >= 4.5 ? hd : x; };
+  const logo = document.getElementById("kl-logo");
+  function applyTheme(c) {
+    const s = document.documentElement.style, th = c && THEMES[c.id];
+    const keys = ["--head", "--head-2", "--head-ink", "--accent-l", "--accent-ink-l", "--accent-dk", "--accent-ink-dk",
+                  "--accent-text-l", "--accent-text-d", "--stripe"];
+    if (!th) { keys.forEach(k => s.removeProperty(k)); logo.src = "assets/kleague_logo_rw.png"; return; }
+    const [hd, hd2, ac] = th, hink = inkOn(hd);
+    // 다크 카드(#0b1a36)에서 강조색이 묻히면(부천·성남·경남 검정) 헤더색을 대비 3까지 밝혀서 쓴다(프라이데이 F26)
+    const DARK = "#0b1a36";
+    const acD = contrast(ac, DARK) >= 3 ? ac : (() => { const b = contrast(hd, ac) > 1.5 ? hd : ac; let t = 0, x = b;
+      while (contrast(x, DARK) < 3 && t < 1) { t += .05; x = mix(b, "#ffffff", t); } return x; })();
+    // 헤더와 강조색이 같으면(울산·부산·성남) 사선 띠를 흰색으로(F29)
+    [hd, hd2, hink, ac, inkOn(ac), acD, inkOn(acD), textOnWhite(ac, hd), readable(ac, DARK, "#ffffff"),
+     contrast(hd, ac) < 1.5 ? "#ffffff" : ac]
+      .forEach((v, i) => s.setProperty(keys[i], v));
+    logo.src = hink === "#ffffff" ? "assets/kleague_logo_rw.png" : "assets/kleague_logo_rb.png";
+  }
+
   function ticketLink(c, where, text) {
     return el("a", { href: ticketUrl(c), target: "_blank", rel: "noopener",
       onclick: () => log("ticket_click", { ticket_club: c.id, where }, true) }, text);
@@ -198,7 +248,7 @@ footer { max-width: 560px; margin: 24px auto 0; font-size: 12px; color: var(--mu
 
   // ---------- 1. 인트로 ----------
   function intro() {
-    club = null; answers = []; renderBar();
+    club = null; answers = []; renderBar(); applyTheme(null);
     show(el("h2", {}, "나는 어떤 유형의 플레이어일까?"),
       el("p", { class: "meta" }, "골잡이, 마에스트로, 통곡의 벽… 11가지 유형 중 하나가 나와요."),
       el("div", { class: "stack" }, el("button", { class: "btn", onclick: pickClub }, "시작하기")));
@@ -214,7 +264,7 @@ footer { max-width: 560px; margin: 24px auto 0; font-size: 12px; color: var(--mu
       el("div", { class: "none" }, el("button", { class: "btn ghost", onclick: () => choose(null) }, "아직 응원팀이 없어요")));
   }
   function choose(c) {
-    club = c; answers = []; renderBar();
+    club = c; answers = []; renderBar(); applyTheme(c);
     log("start");
     question(0);
   }
@@ -276,9 +326,13 @@ footer { max-width: 560px; margin: 24px auto 0; font-size: 12px; color: var(--mu
     const cta = el("div", { class: "stack" },
       el("div", { class: "meta" }, `${tclub.short} 다음 홈경기 · ${nextText(tclub)}`),
       ticketLink(tclub, "result", ""),
+      el("a", { class: "btn plab", href: "https://www.plabfootball.com/", target: "_blank", rel: "noopener",
+        onclick: () => log("plab_click", { type, player: p.name, player_club: p.club, where: "result" }, true) },
+        `플랩에서 ${p.name}처럼 PLAY`),
       el("button", { class: "btn ghost", onclick: intro }, "다시 해 보기"));
     const a = cta.querySelector("a");
-    a.className = "btn board"; a.style.textAlign = "center"; a.style.textDecoration = "none"; a.style.display = "block";
+    a.className = "btn board";
+    cta.querySelectorAll("a").forEach(x => { x.style.textAlign = "center"; x.style.textDecoration = "none"; x.style.display = "block"; });
     a.textContent = playsThere && nextGame(tclub) ? `${p.name} 보러 가기 · ${ticketWord(tclub)}` : `${tclub.short} ${ticketWord(tclub)}`;
 
     const note = sub ? `${club.short}에는 기록상 이 유형에 가까운 선수가 없어서, K리그1 대표 선수를 보여 드려요.`
