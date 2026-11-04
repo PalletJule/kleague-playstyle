@@ -144,12 +144,12 @@ h1 { font-size: clamp(22px, 6vw, 28px); margin: 12px 0 6px; }
 .club { background: #fff; border: 1px solid var(--line); border-radius: 14px; font-weight: 700; }
 .club:hover { background: var(--soft); }
 /* 결과: 구단 색 프로필 카드 */
-.player { background: linear-gradient(135deg, var(--head) 0%, var(--head) 50%, var(--head-2) 100%); color: var(--head-ink); border-radius: 20px; padding: 16px; position: relative; overflow: hidden; }
+.player { background: var(--head); color: var(--head-ink); border-radius: 20px; padding: 16px; position: relative; overflow: hidden; }
 .player::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 6px; background: var(--stripe, var(--accent)); }
-.player .meta { color: inherit; opacity: .8; }
-.player .chip { background: rgba(255,255,255,.2); color: inherit; }
+.player .meta { color: inherit; }
+.player .chip { background: transparent; color: inherit; border: 1px solid currentColor; padding: 2px 9px; }
 .player .stats { color: inherit; }
-.player .stats span { background: rgba(255,255,255,.16); border: 0; color: inherit; }
+.player .stats span { background: transparent; border: 1px solid currentColor; color: inherit; }
 .player img { background: rgba(255,255,255,.15); }
 .basis { background: var(--soft); border-radius: 16px; padding: 14px 16px 10px; }
 .basis li:last-child { border-bottom: 0; }
@@ -177,7 +177,7 @@ h1 { font-size: clamp(22px, 6vw, 28px); margin: 12px 0 6px; }
   <div class="matchbar" id="matchbar" hidden></div>
   <footer>
     선수 유형은 K리그 데이터 포털 2026 시즌 기록(<span id="asof"></span> 기준, 현역 명단)으로 나눴어요. 유형 이름과 아이콘은 플랩풋볼 플레이스타일에서 빌렸고, K리그·플랩과 관계없는 학생 팀의 비공식 프로젝트예요.
-    이름·연락처는 받지 않아요. 연구용으로 고른 구단, 문항별 응답, 결과 유형, 예매 버튼 클릭, 접속 시각·브라우저 종류·유입 경로를 익명으로 모으고, 프로젝트가 끝나면(2026년 12월) 지워요.
+    이름·연락처는 받지 않아요. 연구용으로 고른 구단, 문항별 응답, 결과 유형, 예매·플랩 버튼 클릭, 접속 시각·브라우저 종류·유입 경로를 익명으로 모으고, 프로젝트가 끝나면(2026년 12월) 지워요.
   </footer>
 </main>
 <script src="config.js"></script>
