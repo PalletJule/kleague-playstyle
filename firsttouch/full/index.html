@@ -474,7 +474,7 @@ body.mark #view.quizv .ftf.ins{outline-offset:-3px}
 .kcard .ntf{display:block;margin-top:3px;color:var(--gh);font-weight:700}
 
 /* ───── 11/24 연출: 뽑기형 소개 화면 ───── */
-#phone{position:relative;--fxhl:#1570ff;--fxbg:#fff;--fxcard:#fff;--fxsoft:#f1f3f5;--fxwin1:#c8f79f;--fxwin2:#7fd94a;--fxwintx:#17331a;--fxd1:#1570ff;--fxd2:#5aa0ff;--fxd3:#0b3d91}
+#phone{--fxhl:#1570ff;--fxbg:#fff;--fxcard:#fff;--fxsoft:#f1f3f5;--fxwin1:#c8f79f;--fxwin2:#7fd94a;--fxwintx:#17331a;--fxd1:#1570ff;--fxd2:#5aa0ff;--fxd3:#0b3d91}
 #fx{position:absolute;inset:0;z-index:36;background:var(--fxbg);color:var(--ink);display:flex;flex-direction:column;animation:fxin .28s ease-out}
 @keyframes fxin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .fxtop{display:flex;align-items:center;gap:22px;height:56px;padding:0 18px;flex:none}
@@ -509,6 +509,7 @@ body.mark #view.quizv .ftf.ins{outline-offset:-3px}
 /* 2) 당첨 카드 팝 */
 .fxw{width:178px;height:232px;border-radius:30px;display:flex;align-items:center;justify-content:center;background:linear-gradient(150deg,var(--fxwin1),var(--fxwin2));color:var(--fxwintx);box-shadow:0 18px 40px rgba(40,90,30,.25);opacity:0;animation:fxW 4.4s infinite}
 .fxw b{font-size:46px;font-weight:800;letter-spacing:-.02em}
+.fxw b.sm{font-size:34px;text-align:center;line-height:1.2}
 @keyframes fxW{0%,34%{opacity:0;scale:.5;rotate:-8deg}42%{opacity:1;scale:1.08;rotate:2deg}47%{scale:1;rotate:0deg}58%{opacity:1;scale:1}64%{opacity:0;scale:.92}100%{opacity:0}}
 /* 3) 결과 카드 */
 .fxr{width:236px;background:var(--fxcard);border-radius:22px;padding:14px 14px 16px;text-align:center;box-shadow:0 0 0 1px var(--line),0 12px 30px rgba(20,30,50,.12);opacity:0;animation:fxR 4.4s infinite}
@@ -1404,8 +1405,8 @@ html[data-theme=dark] .fxgo{color:#1b3127}
   const FX = {
     ft: () => ({
       label: 'First Touch 소개',
-      h1: '퀴즈 풀고 응모하면', hl: '레전드와 한 팀', h2: '으로 뛰어요',
-      sub: '응모권은 퀴즈·응원팀·1월 매치로 모아요',
+      h1: '퀴즈 풀고 응모하면', hl: '레전드와 한 팀', h2: '으로 뛸 기회',
+      sub: '응모권은 퀴즈·응원팀·1월 매치·피스로 모아요', win: '응모 완료',
       card: `<div class="fxim"><img src="${A.photo1}" alt=""><\/div><div class="fxin"><small>레전드 스페셜 매치 · 2월 초<\/small><b>당첨자 15명 · 6vs6<\/b><i><\/i><i><\/i><\/div>`,
       tap: '퀴즈 풀기', buy: '응모하기',
       res: `<div class="fxcaps">${['cap_ldg', 'cap_ykh', 'cap_ccs'].map((k) => `<img src="${A[k]}" alt="">`).join('')}<\/div><b>퀴즈 1번 <i>→<\/i> <em>응모권 +1<\/em><\/b>`,
@@ -1422,7 +1423,7 @@ html[data-theme=dark] .fxgo{color:#1b3127}
         card: `<div class="fxim st">${sImg(x)}<\/div><div class="fxin"><small>${esc(x.brand)}<\/small><b>${won(x.price)}<\/b><i><\/i><i><\/i><\/div>`,
         tap: '10피스 뽑기', buy: '피스로 구매',
         res: `<div class="fxim st sm">${sImg(x)}<\/div><b>${won(x.price)} <i>→<\/i> <em>10피스<\/em><\/b>`,
-        tick: 'K리그 굿즈 뽑기 당첨',
+        tick: 'K리그 굿즈 뽑기 당첨', win: '당첨',
         cta: '상품 고르기',
         pill: 'K리그 상품 칸이 새로 열렸어요', hint: '뽑을 상품을 골라 보세요.',
       };
@@ -1455,7 +1456,7 @@ html[data-theme=dark] .fxgo{color:#1b3127}
       <div class="fxhd"><h2>${esc(c.h1)}<br><em>${esc(c.hl)}<\/em>${esc(c.h2)}<\/h2><p>${esc(c.sub)}<\/p><\/div>
       <div class="fxst" aria-hidden="true">
         <div class="fxa"><div class="fxph">${c.card}<div class="fxbt"><span class="hb">♡<\/span><span class="tg">${esc(c.tap)}<u><\/u><\/span><span class="by">${esc(c.buy)}<\/span><\/div><\/div><\/div>
-        <div class="fxw"><b>당첨<\/b><\/div>
+        <div class="fxw"><b class="${c.win.length > 2 ? 'sm' : ''}">${esc(c.win)}<\/b><\/div>
         <div class="fxr">${c.res}<\/div>
         ${dots.map(([x, y, s, k]) => `<i class="dt ${k}" style="--x:${x}px;--y:${y}px;width:${s}px;height:${s}px"><\/i>`).join('')}
       <\/div>
