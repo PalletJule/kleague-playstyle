@@ -508,6 +508,12 @@ html[data-theme=dark] .cvs .ctab b{background:var(--g);color:#1b3127}
 html[data-theme=dark] .cvs .cme,html[data-theme=dark] .cvs .cr.me,html[data-theme=dark] .cstk{background:rgba(166,245,111,.12)}
 html[data-theme=dark] .cvs .crw .t.s{background:#0072CE}
 html[data-theme=dark] .cvs .cr .br i{box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.55)}
+.stk .srec{display:grid;grid-template-columns:1fr 1fr;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.3)}.stk .srec div+div{border-left:1px solid rgba(255,255,255,.3)}.stk .srec small{display:block;font-size:13px;opacity:.9}.stk .srec b{font-size:24px;font-weight:800}
+.sfr li{display:flex;align-items:center;gap:12px;padding:10px 0}.sfr .av{width:40px;height:40px;border-radius:50%;background:var(--chip);display:grid;place-items:center;color:var(--sub);font-weight:700}
+.sfr .nm{flex:1}.sfr .nm b{display:block;font-size:15px}.sfr .nm small{display:flex;gap:6px;align-items:center;font-size:12.5px;color:var(--sub)}.sfr .nm small .ins{display:inline-flex!important;gap:3px;align-items:center;color:var(--gh);font-weight:700}.sfr .w{font-size:18px;font-weight:800}
+.sop{display:flex;align-items:center;gap:12px}.sop>div{flex:1}.sop b{display:block;font-size:15px}.sop small{font-size:12.5px;color:var(--sub)}
+.snt ul{margin-top:10px;padding-left:18px;list-style:disc}.snt li{font-size:12.5px;color:var(--sub);line-height:1.55;margin:3px 0}.snt li.ins{display:list-item!important}.snt li b{color:var(--ink)}
+body[data-mode=pilot] .snt li.ins,body[data-mode=pilot] .sfr .nm small .ins{display:none!important}
 
 /* ───── 11/24 연출: 뽑기형 소개 화면 ───── */
 #phone{--fxhl:#1570ff;--fxbg:#fff;--fxcard:#fff;--fxsoft:#f1f3f5;--fxwin1:#c8f79f;--fxwin2:#7fd94a;--fxwintx:#17331a;--fxd1:#1570ff;--fxd2:#5aa0ff;--fxd3:#0b3d91}
@@ -1286,23 +1292,28 @@ html[data-theme=dark] .prof .avp{color:#1b3127}
       const li = (n, sub, tgt) => `<li class="${tgt ? 'ins' : ''}"><span class="av">${esc(n[0])}<\/span><span class="n">${esc(n)}<small>${esc(sub)}<\/small>${tgt ? `<span class="tgt">${esc(tgt)}<\/span>` : ''}<\/span><button data-toast="시연이라 신청되지 않습니다">친구 신청<\/button><\/li>`;
       return `${bk('', 1)}<div class="seg2"><span>내 친구 3<\/span><b>친구 찾기<\/b><\/div><div style="display:flex;gap:6px;padding:10px 16px"><span class="pill">친구 초대<\/span><span class="pill">내 프로필 공유<\/span><\/div><div class="dayh" style="padding-top:6px">친구 추천<\/div><ul class="fr">${sameClub.map((p) => li(p.nick, '최근 10매치 중 함께 참여', `같은 구단 팬 · ${S.club}`)).join('')}${li('독산엔진', '나를 칭찬한 플래버')}${li('구로패스', '최근 10매치 중 함께 참여')}${li('철산윙어', '선택한 지역·시간이 같은 플래버')}<\/ul>`;
     },
-    // 11/25: 연속 기록 + K리그 구단 연속 기록 대항전(응원팀 팬 중 연속 출전 중인 비율로 겨룸). 수치는 시연용 가상.
+    // 11/25: 실제 플랩 연속 기록 화면(/my/streak, 11/25 로그인 확인) 순서에 맞춤 — 빨간 카드(현재·최고 기록) → 최근 8주 → [추가] 구단 대항전 → 친구의 현재 연속 기록 → 내 연속 기록 공개 → 유의사항.
+    // 구단 대항전: 응원팀 팬 중 연속 기록이 켜져 있는 비율로 겨룸. 수치·친구 닉네임은 시연용 가상.
     streak() {
       const wk = [0, 0, 1, 1, 0, 1, 1, 1], lb = ['10월1주', '2주', '3주', '4주', '5주', '11월1주', '2주', '3주'];
       const R = streakRank(), me = R.find((r) => r.short === S.club), i = me ? R.indexOf(me) : -1;
       const row = (r, k) => `<div class="cr${r === me ? ' me' : ''}"><span class="rk">${k + 1}<\/span>${shield(r.short, 22)}<span class="nm">${esc(r.short)}${r === me ? '<em>내 응원팀<\/em>' : ''}<\/span><span class="br"><i style="width:${(r.rate / R[0].rate * 100).toFixed(1)}%;background:${r.col}"><\/i><\/span><b>${r.rate.toFixed(1)}%<\/b><\/div>`;
       const list = R.slice(0, 5).map(row).join('') + (i >= 5 ? `<div class="cgap">⋮<\/div>${i > 5 ? row(R[i - 1], i - 1) : ''}${row(me, i)}` : '');
-      const gap = me && i > 0 ? `<p class="cnx">${i + 1}위 · ${esc(R[i - 1].short)}까지 <b>${(R[i - 1].rate - me.rate).toFixed(1)}%p<\/b> 남았어요. 이번 주 매치를 뛰면 ${esc(S.club)}의 연속 기록 인원이 지켜져요.<\/p>` : me ? `<p class="cnx">지금 <b>1위<\/b>예요. 2위 ${esc(R[1].short)}와 ${(me.rate - R[1].rate).toFixed(1)}%p 차이예요.<\/p>` : '<p class="cnx">응원팀을 정하면 내 연속 기록이 구단 순위에 더해져요.<\/p>';
-      return `${bk('', 1).replace('class="bk "', 'class="bk " style="background:var(--bg)"')}<div class="stk"><img src="${A.fireball}" alt=""><h2>3주 연속 출전하고 있어요<\/h2><p>다음 주에도 불꽃을 이어가요<\/p><span class="pl">상위 41% | 76,209명이 연속 출전 중<\/span>${me ? `<br><span class="pl k ins">${esc(S.club)} 팬 중 ${me.on.toLocaleString()}명이 연속 출전 중<\/span>` : ''}<\/div>
+      const gap = me && i > 0 ? `<p class="cnx">${i + 1}위 · ${esc(R[i - 1].short)}까지 <b>${(R[i - 1].rate - me.rate).toFixed(1)}%p<\/b> 남았어요. 이번 주 매치를 뛰면 내 불꽃이 ${esc(S.club)} 비율을 지켜요.<\/p>` : me ? `<p class="cnx">지금 <b>1위<\/b>예요. 2위 ${esc(R[1].short)}와 ${(me.rate - R[1].rate).toFixed(1)}%p 차이예요.<\/p>` : '<p class="cnx">응원팀을 정하면 내 연속 기록이 그 구단 비율에 더해져요.<\/p>';
+      const fr = [['독산엔진', '울산', 7, 9], ['구로패스', S.club !== '없음' ? S.club : '서울', 5, 14], ['철산윙어', '전북', 2, 38]];
+      return `${bk('', 1).replace('class="bk "', 'class="bk " style="background:var(--bg)"')}<div class="stk"><img src="${A.fireball}" alt=""><h2>3주 연속 출전하고 있어요<\/h2><p>다음 주에도 불꽃을 이어가요<\/p><span class="pl">76,209명이 연속 출전 중<\/span>${me ? `<br><span class="pl k ins">${esc(S.club)} 팬 중 ${me.on.toLocaleString()}명이 연속 출전 중<\/span>` : ''}<div class="srec"><div><small>현재 기록<\/small><b>3<\/b><\/div><div><small>최고 기록<\/small><b>5<\/b><\/div><\/div><\/div>
+      <div class="rc"><h2 style="font-size:17px">최근 8주 기록<\/h2><div class="wk">${wk.map((w, i) => `<div>${w ? `<img src="${A.stamp}" alt="출전">` : '<i><\/i>'}<span class="${i === 7 ? 'now' : ''}">${lb[i]}<\/span><\/div>`).join('')}<\/div><button class="go sq" data-go="home" style="margin-top:12px">매치 신청하기<\/button><\/div>
       <div class="rc ins cvs"><div class="chd"><img src="${A.k_symbol_rw}" class="ks" alt=""><div><small>K리그 × 플랩 · 11월<\/small><h2>구단 연속 기록 대항전<\/h2><\/div><\/div>
-      <p class="csub">응원팀 팬 중 <b>연속 출전 중인 비율<\/b>로 겨뤄요. 팬 수가 아니라 비율이라 작은 구단도 1위를 할 수 있어요.<\/p>
+      <p class="csub">응원팀 팬 중 <b>불꽃이 켜져 있는 사람의 비율<\/b>로 겨뤄요. 팬 수가 아니라 비율이라 작은 구단도 1위를 할 수 있어요.<\/p>
       ${me ? `<div class="cme">${shield(S.club, 34)}<div><small>내 응원팀<\/small><b>${esc(S.club)} ${i + 1}위 · ${me.rate.toFixed(1)}%<\/b><span>팬 ${me.fans.toLocaleString()}명 중 ${me.on.toLocaleString()}명 연속 출전 · 나도 3주째<\/span><\/div><\/div>` : ''}
       <div class="ctab"><b>이번 달<\/b><span data-toast="시즌 누적 순위는 시연 범위 밖입니다">시즌 누적<\/span><\/div>
       <div class="clist">${list}<\/div>${gap}
       <div class="crw"><div><span class="t">매달 1위<\/span><p>그 구단 팬 전원 <b>K리그 패스 도장 +1<\/b><\/p><\/div><div><span class="t s">시즌 1위<\/span><p>홈경기 <b>플랩 데이<\/b> · 직관 쿠폰과 플랩 팬 응원석<\/p><\/div><\/div>
-      <div class="cbt"><button class="go sq ln" data-go="kpass">K리그 패스 보기<\/button><button class="go sq" data-go="coupon">직관 쿠폰 보기<\/button><\/div>
-      <p class="cft">비율 = 응원팀을 정한 플래버 중 이번 주까지 연속 출전 중인 사람 ÷ 그 구단 팬 수. 팬 30명 이상 구단만 순위에 올라요. 수치는 시연용 가상입니다.<\/p><\/div>
-      <div class="rc"><h2 style="font-size:17px">최근 8주 기록<\/h2><div class="wk">${wk.map((w, i) => `<div>${w ? `<img src="${A.stamp}" alt="출전">` : '<i><\/i>'}<span class="${i === 7 ? 'now' : ''}">${lb[i]}<\/span><\/div>`).join('')}<\/div><button class="go sq" data-go="home" style="margin-top:12px">매치 신청하기<\/button><\/div><div style="height:12px"><\/div>`;
+      <div class="cbt"><button class="go sq ln" data-go="kpass">K리그 패스 보기<\/button><button class="go sq" data-go="coupon">직관 쿠폰 보기<\/button><\/div><\/div>
+      <div class="rc"><h2 style="font-size:17px">친구의 현재 연속 기록<\/h2><ul class="sfr">${fr.map(([n, c, w, p]) => `<li><span class="av">${esc(n[0])}<\/span><span class="nm"><b>${esc(n)}<\/b><small>상위 ${p}%<span class="ins">${shield(c, 14)}${esc(c)} 팬<\/span><\/small><\/span><b class="w">${w}<\/b><\/li>`).join('')}<\/ul><\/div>
+      <div class="rc sop"><div><b>내 연속 기록 공개<\/b><small>내 프로필, 친구 연속 기록에서 내 연속 기록을 공개해요<\/small><\/div><span class="sw" role="switch" aria-checked="true" aria-label="내 연속 기록 공개"><\/span><\/div>
+      <div class="rc snt"><h2 style="font-size:17px">유의사항<\/h2><ul><li>연속 기록에 소셜 매치, 스타터 매치는 포함되고, 게스트 모집 매치는 포함되지 않아요.<\/li><li>강수, 인원 미달, 구장 사정 등으로 매치가 취소된 경우 참가로 기록되지 않아요.<\/li><li>한 주의 시작은 월요일이에요. 한 주(월~일)에 여러 번 참가해도 1주로 계산돼요.<\/li><li>쉬는 주가 있으면 다시 1주부터 시작해요.<\/li>
+      <li class="ins"><b>구단 대항전<\/b> 비율 = 응원팀을 정한 플래버 중 그 주에 연속 기록이 켜져 있는 사람 ÷ 그 구단 팬 수. 주마다 계산해 달 평균으로 순위를 정해요.<\/li><li class="ins">팬 30명 이상 구단만 순위에 올라요. 응원팀을 바꾸면 다음 달 집계부터 반영돼요. 구단 집계에는 이름 없이 인원만 들어가요.<\/li><li class="ins">대항전 순위·인원은 시연용 가상 수치예요.<\/li><\/ul><\/div><div style="height:12px"><\/div>`;
     },
     calendar() {
       const ap = Object.keys(S.applied).filter((k) => S.applied[k]);
@@ -1461,7 +1472,7 @@ html[data-theme=dark] .prof .avp{color:#1b3127}
     training: { app: { title: '3단계 · 오픈 트레이닝', rows: [['추가', '팀 K리그 오픈 트레이닝 플랩 이용자 관람석, 스페셜 매치 응모자 우선 신청.'], ['근거', '2026.08.04 팀 K리그 공개 훈련 사례.'], ['확인', '관람석 규모·운영, 경기 예매 할인 안내.']] } },
   });
   CAP.appquiz = { app: { title: '2단계 · 앱 안 플레이스타일 퀴즈', rows: [['추가', '1단계 웹 이벤트의 퀴즈를 앱 기능으로 상시 운영합니다. 응모·추첨·경품은 빼고, 결과는 내 응원팀(경기 알림·직관 쿠폰)으로 이어집니다.'], ['근거', '문항·채점·선수 데이터는 1단계와 같습니다.'], ['확인', '퀴즈 입구(홈 배너·마이·AI 리포트)와 다시 하기 주기.']] } };
-  CAP.streak = { app: { title: '2단계 · 연속 기록 · 구단 대항전', rows: [['추가', '플랩 연속 기록(주 연속 출전)에 K리그 구단 대항전: 응원팀 팬 중 연속 출전 중인 비율로 29개 구단 순위. 내 구단 순위와 윗 순위까지 격차.'], ['연결', '매달 1위 구단 팬 전원 K리그 패스 도장 +1, 시즌 1위 구단 홈경기 플랩 데이(직관 쿠폰·플랩 팬 응원석) → 3단계 직관으로 이어집니다.'], ['근거', '지금 플랩 마이 → 연속 기록 화면과 상위 % 표시를 그대로 쓰고, 팬 수가 아닌 비율이라 작은 구단도 겨룰 수 있습니다.'], ['확인', '구단별 순위 공개 범위(연맹·구단 협의), 최소 팬 수 기준, 보상 비용 분담. 수치는 가상입니다.']] } };
+  CAP.streak = { app: { title: '2단계 · 연속 기록 · 구단 대항전', rows: [['추가', '플랩 연속 기록(주 연속 출전)에 K리그 구단 대항전: 응원팀 팬 중 연속 출전 중인 비율로 29개 구단 순위. 내 구단 순위와 윗 순위까지 격차.'], ['연결', '매달 1위 구단 팬 전원 K리그 패스 도장 +1, 시즌 1위 구단 홈경기 플랩 데이(직관 쿠폰·플랩 팬 응원석) → 3단계 직관으로 이어집니다.'], ['근거', '지금 플랩 마이 → 연속 기록 화면(11/25 확인: 현재·최고 기록, 최근 8주, 친구의 현재 연속 기록·상위 %, 공개 토글, 유의사항)을 그대로 두고 대항전 칸과 친구 응원팀 표시만 넣었습니다. 주 계산은 플랩 규칙(월~일, 쉬면 1주부터)을 따릅니다.'], ['확인', '구단별 순위 공개 범위(연맹·구단 협의), 연속 기록 비공개 이용자의 집계 포함 여부, 최소 팬 수 기준, 보상 비용 분담. 수치는 가상입니다.']] } };
   const STEPS = {
     app: [['ft_quiz', '퀴즈'], ['ft_result', '결과 · 응원팀 +1'], ['ft_draw', '럭키드로우'], ['ft_done', '응모 완료'], ['special', '레전드 스페셜 매치'], ['home', '앱 홈 · 퀴즈·응원팀'], ['my', '마이 · 응원팀'], ['streak', '연속 기록 · 구단 대항전'], ['calendar', '일정 · 경기 알림'], ['store', '플랩 스토어'], ['kpass', 'K리그 패스'], ['aireport', 'AI 리포트'], ['coupon', '직관 쿠폰'], ['tkl', '팀 K리그 스페셜 매치'], ['training', '오픈 트레이닝']],
     pilot: [['start', '프로필'], ['home', '홈'], ['match', '매치 상세'], ['pcount', '신청자 보기'], ['done', '신청 완료'], ['pform', '폼'], ['locker', '라커룸'], ['screen', '스크린'], ['proster', '명단(조건부)'], ['result', '매치 결과'], ['aireport', 'AI 리포트']],
