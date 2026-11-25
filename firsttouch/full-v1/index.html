@@ -37915,7 +37915,7 @@ footer .demo button { appearance: none; border: 0; background: none; padding: 6p
   const photoKey = u => (u && u.includes("/v1/player/") && u.endsWith(".png")) ? u.split("/v1/player/")[1].slice(0, -4).replace(/\W/g, "_") : null;
   const refCode = () => { if (!S.myRef) { S.myRef = Math.random().toString(36).slice(2, 8).toUpperCase().replace(/[^A-Z0-9]/g, "X"); save(); } return S.myRef; };
 
-  // 응모권 = 퀴즈 1 + 응원팀 1 + 1월 매치(시연 0) + 피스 스토어 구매
+  // 응모권 = 퀴즈 1 + 응원팀 1 + 1월 매치(시연 0) + 플랩 스토어 구매
   const tickets = () => (S.type ? 1 : 0) + (S.type && S.team ? 1 : 0) + S.bought;
 
   function ticketEl(n, pop) {
@@ -38262,7 +38262,7 @@ footer .demo button { appearance: none; border: 0; background: none; padding: 6p
           S.team ? el("li", {}, el("span", {}, "개막전 알림", el("span", { class: "s" }, "2027 시즌 개막전 예매 열리면 알려 드려요")),
             btn(S.alarm ? "받는 중" : "알림 받기", () => { S.alarm = !S.alarm; save(); log("alarm", { on: String(S.alarm) }); draw(); }, "mini-btn" + (S.alarm ? " on" : ""))) : null,
           el("li", {}, el("span", {}, "1월 플랩 매치", el("span", { class: "s" }, "매치 한 번 뛸 때마다 +1")), el("a", { class: "mini-btn", href: PLAB_URL, target: "_blank", rel: "noopener", onclick: () => log("match_link") }, "매치 찾기")),
-          el("li", {}, el("span", {}, "피스 스토어", el("span", { class: "s" }, `30피스로 1장${S.bought ? ` · 산 응모권 ${S.bought}장` : ""}`)), btn("사기", () => { S.bought++; save(); log("buy", { bought: String(S.bought) }); toast("30피스로 응모권 1장 샀어요"); draw(); }, "mini-btn")))),
+          el("li", {}, el("span", {}, "플랩 스토어", el("span", { class: "s" }, `30피스로 1장${S.bought ? ` · 산 응모권 ${S.bought}장` : ""}`)), btn("사기", () => { S.bought++; save(); log("buy", { bought: String(S.bought) }); toast("30피스로 응모권 1장 샀어요"); draw(); }, "mini-btn")))),
       el("label", { class: "hope", for: "hope" }, hope, el("span", {}, el("b", {}, "스페셜 매치도 나갈래요 · 2월 초 참석 가능"), el("span", {}, "체크한 분 중에서 15명 따로 뽑아요. K리그를 안 보는 친구와 함께 응모하면 우대해요"))),
       el("div", { class: "stack" }, btn(S.applied ? `응모권 ${n}장으로 다시 응모하기` : `응모권 ${n}장으로 응모하기`, apply)),
       el("p", { class: "meta", style: "text-align:center;margin:10px 0 0" }, "공개 추첨 1월 말 · 플랩 알림으로 알려 드려요"),
@@ -38559,7 +38559,7 @@ footer .demo button { appearance: none; border: 0; background: none; padding: 6p
       <ul class="rows"><li><span>토 · 광주FC vs 전북</span><span class="on">알림 켜짐</span></li><li><span>수 · 대전 vs 광주FC</span><span class="on">알림 켜짐</span></li></ul>
       <p class="demo-note">예시 화면이에요. 팀, 일정, 이름은 실제와 다를 수 있어요.</p>` },
     "s2_store": { chip: `<span class="tk">1,240 피스</span>`, plab: true, html: `
-      <div class="hero big" style="margin:0 -16px"><h1>피스 스토어</h1><p>모은 피스로 K리그 굿즈를 바꿔요</p></div>
+      <div class="hero big" style="margin:0 -16px"><h1>플랩 스토어</h1><p>모은 피스로 K리그 굿즈를 바꿔요</p></div>
       <div class="tabs"><span>전체</span><span class="on">K리그</span><span>플랩</span></div>
       <div class="prizes">
         <div class="prize"><div class="im"><img src="${P("유니폼")}" alt=""></div><span class="tag">NEW</span><b>2026 팀 K리그 유니폼</b><span class="pc">3,000피스</span></div>
@@ -38608,7 +38608,7 @@ footer .demo button { appearance: none; border: 0; background: none; padding: 6p
   };
 
   const ORDER = [
-    ["s2_profile", "2단계", "앱 적용"], ["s2_store", "2단계", "피스 스토어"], ["s2_pass", "2단계", "K리그 패스"],
+    ["s2_profile", "2단계", "앱 적용"], ["s2_store", "2단계", "플랩 스토어"], ["s2_pass", "2단계", "K리그 패스"],
     ["s3_coupon", "3단계", "직관 쿠폰"], ["s3_special", "3단계", "팀 K리그 스페셜 매치"], ["s3_training", "3단계", "오픈 트레이닝"],
   ];
   const site = document.getElementById("site"), view = document.getElementById("view"), rEl = document.getElementById("appbar-r");
@@ -38667,12 +38667,12 @@ footer .demo button { appearance: none; border: 0; background: none; padding: 6p
       ["result", "결과 · 응모권 +1", "나와 닮은 K리그 선수", [["근거", "K리그 데이터 포털 2026 시즌 기록으로 유형별 선수 선정"], ["화면", "선수 사진·기록과 리그 상위 % 근거"], ["보상", "퀴즈 참여로 응모권 +1"]]],
       ["team", "응원팀 정하기 +1", "닮은 선수의 구단을 응원팀으로", [["보상", "응원팀을 정하면 응모권 +1"], ["알림", "2027 시즌 개막전 예매 알림 신청"], ["연결", "2·3단계 구단 연계의 기준이 됨"]]],
       ["login", "플랩 가입·로그인", "응모권을 플랩 계정에 저장", [["동의", "필수 2개(결과 저장·응모 안내) + 선택 1개"], ["방법", "카카오·Apple·이메일 또는 1분 회원가입"], ["측정", "신규 가입 수를 여기서 셈"]]],
-      ["draw", "럭키드로우", "응모권을 모아 응모", [["모으는 법", "퀴즈 · 응원팀 · 1월 플랩 매치 · 피스 스토어 30피스"], ["스페셜 매치", "참가 희망을 체크한 사람 중 15명 따로 추첨"], ["팀", "공격·미드·수비 플레이스타일 세 팀(안)"]]],
+      ["draw", "럭키드로우", "응모권을 모아 응모", [["모으는 법", "퀴즈 · 응원팀 · 1월 플랩 매치 · 플랩 스토어 30피스"], ["스페셜 매치", "참가 희망을 체크한 사람 중 15명 따로 추첨"], ["팀", "공격·미드·수비 플레이스타일 세 팀(안)"]]],
       ["done", "응모 완료", "응모권 확인과 다음 행동", [["발표", "1월 말 플랩 알림"], ["확산", "1월 매치 뛰고 응모권 더 받기 · 친구에게 퀴즈 보내기"], ["다음", "아래에서 2·3단계 화면으로 이어짐"]]],
     ] },
     { g: "2단계 · K리그 일상화", items: [
       ["s2_profile", "앱 적용", "플랩 안에서 만나는 내 응원팀", [["프로필", "응원팀 표시, 플랩 매치 수와 K리그 직관 수 함께 기록"], ["알림", "응원팀 경기 일정과 경기 시작 30분 전 알림"]]],
-      ["s2_store", "피스 스토어", "피스로 바꾸는 K리그 굿즈", [["상품", "팀 K리그 유니폼, 공인구 등 K리그 굿즈 입점"], ["한정", "플랩에서만 교환하는 팀 K리그 한정 굿즈"], ["주의", "상품과 피스 가격은 예시"]]],
+      ["s2_store", "플랩 스토어", "피스로 바꾸는 K리그 굿즈", [["상품", "팀 K리그 유니폼, 공인구 등 K리그 굿즈 입점"], ["한정", "플랩에서만 교환하는 팀 K리그 한정 굿즈"], ["주의", "상품과 피스 가격은 예시"]]],
       ["s2_pass", "K리그 패스", "공 차고, 직관 가고, 도장 모으기", [["적립", "플랩 매치 +1 · K리그 직관 +2(홈·원정)"], ["보상", "도장 10개면 팀 K리그 스페셜 매치 응모권 1장"]]],
     ] },
     { g: "3단계 · 직관 유도", items: [

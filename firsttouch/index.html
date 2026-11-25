@@ -37915,7 +37915,7 @@ footer .demo button { appearance: none; border: 0; background: none; padding: 6p
   const photoKey = u => (u && u.includes("/v1/player/") && u.endsWith(".png")) ? u.split("/v1/player/")[1].slice(0, -4).replace(/\W/g, "_") : null;
   const refCode = () => { if (!S.myRef) { S.myRef = Math.random().toString(36).slice(2, 8).toUpperCase().replace(/[^A-Z0-9]/g, "X"); save(); } return S.myRef; };
 
-  // 응모권 = 퀴즈 1 + 응원팀 1 + 1월 매치(시연 0) + 피스 스토어 구매
+  // 응모권 = 퀴즈 1 + 응원팀 1 + 1월 매치(시연 0) + 플랩 스토어 구매
   const tickets = () => (S.type ? 1 : 0) + (S.type && S.team ? 1 : 0) + S.bought;
 
   function ticketEl(n, pop) {
@@ -38262,7 +38262,7 @@ footer .demo button { appearance: none; border: 0; background: none; padding: 6p
           S.team ? el("li", {}, el("span", {}, "개막전 알림", el("span", { class: "s" }, "2027 시즌 개막전 예매 열리면 알려 드려요")),
             btn(S.alarm ? "받는 중" : "알림 받기", () => { S.alarm = !S.alarm; save(); log("alarm", { on: String(S.alarm) }); draw(); }, "mini-btn" + (S.alarm ? " on" : ""))) : null,
           el("li", {}, el("span", {}, "1월 플랩 매치", el("span", { class: "s" }, "매치 한 번 뛸 때마다 +1")), el("a", { class: "mini-btn", href: PLAB_URL, target: "_blank", rel: "noopener", onclick: () => log("match_link") }, "매치 찾기")),
-          el("li", {}, el("span", {}, "피스 스토어", el("span", { class: "s" }, `30피스로 1장${S.bought ? ` · 산 응모권 ${S.bought}장` : ""}`)), btn("사기", () => { S.bought++; save(); log("buy", { bought: String(S.bought) }); toast("30피스로 응모권 1장 샀어요"); draw(); }, "mini-btn")))),
+          el("li", {}, el("span", {}, "플랩 스토어", el("span", { class: "s" }, `30피스로 1장${S.bought ? ` · 산 응모권 ${S.bought}장` : ""}`)), btn("사기", () => { S.bought++; save(); log("buy", { bought: String(S.bought) }); toast("30피스로 응모권 1장 샀어요"); draw(); }, "mini-btn")))),
       el("label", { class: "hope", for: "hope" }, hope, el("span", {}, el("b", {}, "스페셜 매치도 나갈래요 · 2월 초 참석 가능"), el("span", {}, "체크한 분 중에서 15명 따로 뽑아요. K리그를 안 보는 친구와 함께 응모하면 우대해요"))),
       el("div", { class: "stack" }, btn(S.applied ? `응모권 ${n}장으로 다시 응모하기` : `응모권 ${n}장으로 응모하기`, apply)),
       el("p", { class: "meta", style: "text-align:center;margin:10px 0 0" }, "공개 추첨 1월 말 · 플랩 알림으로 알려 드려요"),
